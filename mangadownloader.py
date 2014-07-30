@@ -18,8 +18,8 @@ def get_page(url=''):
     return (True, soup.find_all('img')[0].get('src'))
 
 
-def get_chapter(comic='', chapter=0):
-    url = 'http://www.mangapanda.com/%s/%s/' % (comic, str(chapter))
+def get_chapter(manga='', chapter=0, dest=''):
+    url = 'http://www.mangapanda.com/%s/%s/' % (manga, str(chapter))
     page_no = 1
 
     if not get_page(url):
@@ -30,27 +30,28 @@ def get_chapter(comic='', chapter=0):
         if not page[0]:
             return (False, 'no page')
         print page[1]
-        urllib.urlretrieve(page[1], 'manga/%s/%s_%s.jpg' % (comic,
+        urllib.urlretrieve(page[1], '%s/%s/%s_%s.jpg' % (dest, manga,
                            str(chapter), str(page_no)))
         page_no = page_no + 1
 
 
-def get_comic(comic='', **kwargs):
+def get_manga(manga='', **kwargs):
     chapterFrom = kwargs.get('chapterFrom', 1)
     chapterTo = kwargs.get('chapterTo', 1)
+    dest = kwargs.get('dest', '')
 
-    directory = 'manga/%s' % comic
+    directory = '%s/%s' % (dest, manga)
 
     if not os.path.exists(directory):
         os.makedirs(directory)
 
     while True:
-        get_chapter(comic, chapterFrom)
+        get_chapter(manga, chapterFrom, dest)
         chapterFrom = chapterFrom + 1
 
-        if chapterFrom >= chapterTo:
+        if chapterFrom > chapterTo:
             print 'Done'
-
+            return
 
 
 if __name__ == '__main__':
@@ -58,14 +59,17 @@ if __name__ == '__main__':
         argparse.ArgumentParser(description='Download from mangapanda.com'
                                 )
     parser.add_argument('manga', metavar='manga', help='The manga name')
-    parser.add_argument('chapterFrom', metavar='from',
+    parser.add_argument('chapterFrom', metavar='from', type=int,
                         help='Download from chapter')
-    parser.add_argument('chapterTo', metavar='to',
+    parser.add_argument('chapterTo', metavar='to', type=int,
                         help='Download to chapter')
+    parser.add_argument('--dest', dest='dest', default='~/manga/',
+                        help='Download to directory (default: ~/manga/)'
+                        )
 
     args = parser.parse_args()
     print args
 
-    get_comic(args.manga, chapterFrom=args.chapterFrom,
+    get_manga(args.manga, dest=os.path.expanduser(args.dest), chapterFrom=args.chapterFrom,
               chapterTo=args.chapterTo)
 
