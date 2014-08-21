@@ -30,8 +30,8 @@ def get_chapter(manga='', chapter=0, dest=''):
         if not page[0]:
             return (False, 'no page')
         print page[1]
-        urllib.urlretrieve(page[1], '%s/%s/%s_%s.jpg' % (dest, manga,
-                           str(chapter), str(page_no)))
+        urllib.urlretrieve(page[1], '%s/%s/%03d_%02d.jpg' % (dest, manga,
+                           chapter, page_no))
         page_no = page_no + 1
 
 
@@ -63,7 +63,8 @@ if __name__ == '__main__':
                         help='Download from chapter')
     parser.add_argument('chapterTo', metavar='to', type=int, nargs='?',
                         help='Download to chapter. Leave this blank to \
-                                download one chapter')
+                                download one chapter'
+                        )
     parser.add_argument('--dest', dest='dest', default='~/manga/',
                         help='Download to directory (default: ~/manga/)'
                         )
