@@ -37,7 +37,7 @@ def get_chapter(manga='', chapter=0, dest=''):
 
 def get_manga(manga='', **kwargs):
     chapterFrom = kwargs.get('chapterFrom', 1)
-    chapterTo = kwargs.get('chapterTo', 1)
+    chapterTo = kwargs.get('chapterTo', chapterFrom)
     dest = kwargs.get('dest', '')
 
     directory = '%s/%s' % (dest, manga)
@@ -61,15 +61,14 @@ if __name__ == '__main__':
     parser.add_argument('manga', metavar='manga', help='The manga name')
     parser.add_argument('chapterFrom', metavar='from', type=int,
                         help='Download from chapter')
-    parser.add_argument('chapterTo', metavar='to', type=int,
-                        help='Download to chapter')
+    parser.add_argument('chapterTo', metavar='to', type=int, nargs='?',
+                        help='Download to chapter. Leave this blank to \
+                                download one chapter')
     parser.add_argument('--dest', dest='dest', default='~/manga/',
                         help='Download to directory (default: ~/manga/)'
                         )
 
     args = parser.parse_args()
-    print args
 
-    get_manga(args.manga, dest=os.path.expanduser(args.dest), chapterFrom=args.chapterFrom,
-              chapterTo=args.chapterTo)
-
+    get_manga(args.manga, dest=os.path.expanduser(args.dest),
+              chapterFrom=args.chapterFrom, chapterTo=args.chapterTo)
